@@ -23,9 +23,11 @@ return new class extends Migration
                 ->comment('Alpha-2 codes are two-letter country codes defined in ISO 3166-1');
 
             $table->string('iso_code3', 3)
+                ->nullable()
                 ->comment('Alpha-3 codes are three-letter country codes defined in ISO 3166-1');
 
             $table->smallInteger('number_code')
+                ->nullable()
                 ->comment('Numeric (or numeric-3) codes are three-digit country codes defined in ISO 3166-1');
 
             $table->integer('dial')
