@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Exceptions\AppException;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +37,7 @@ class CountrySeeder extends Seeder
         $path = 'seeders/json_files/countries.json';
         $countries_json_file = database_path($path);
         if( !file_exists($countries_json_file) ) {
-            throw new \ErrorException("File doesn't exist [{$path}]");
+            throw new AppException("File doesn't exist [{$path}]");
         }
         return json_decode(file_get_contents($countries_json_file));
     }
