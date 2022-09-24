@@ -3,11 +3,14 @@
 namespace App\Http\Services;
 
 use App\Models\Country;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 class CountryService
 {
     /**
-     * @var \App\Models\Country
+     * @var Country
      */
     protected $_entity;
 
@@ -17,15 +20,15 @@ class CountryService
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * @param Request $request
+     * @return LengthAwarePaginator
      */
-    public function index($request)
+    public function index(Request $request): LengthAwarePaginator
     {
         $per_page = ($request->has('per_page') ? $request->per_page : 10);
         if($per_page > 100) {$per_page = 100;}
 
-        /** @var \Illuminate\Database\Eloquent\Builder */
+        /** @var Builder */
         $obj = $this->_entity::orderBy('name');
 
         $this->filterIndex($request, $obj);
@@ -34,10 +37,10 @@ class CountryService
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-     * @param \Illuminate\Database\Eloquent\Builder $obj
+     * @param Request $request
+     * @param Builder $obj
      */
-    public function filterIndex($request, &$obj): void
+    public function filterIndex(Request $request, Builder &$obj): void
     {
         if($request->has('name') && !empty($request->name)){
             $obj->where('name','like',"%{$request->name}%");
