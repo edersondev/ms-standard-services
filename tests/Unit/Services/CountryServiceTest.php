@@ -30,11 +30,6 @@ class CountryServiceTest extends TestCase
     protected $_builder;
 
     /**
-     * @var Request
-     */
-    protected $_request;
-
-    /**
      * This method is called before each test.
      */
     public function setUp(): void
