@@ -15,7 +15,7 @@ class CountryController extends Controller
         $this->_service = $service;
     }
 
-    public function index(Request $request) 
+    public function index(Request $request)
     {
         return new ResponseCollection($this->_service->index($request));
     }

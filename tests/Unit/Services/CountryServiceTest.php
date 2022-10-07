@@ -67,7 +67,7 @@ class CountryServiceTest extends TestCase
      */
     public function whenIndexThenReturnCollection(): void
     {
-        $number_items = random_int(2,5);
+        $number_items = random_int(2, 5);
 
         $countries = Country::factory($number_items)->make();
 
@@ -88,26 +88,5 @@ class CountryServiceTest extends TestCase
         $this->assertEquals(10, $result->perPage());
         $this->assertCount($number_items, $result->items());
         $this->assertContainsOnlyInstancesOf(Country::class, $result->items());
-    }
-
-    /**
-     * @test
-     */
-    public function whenIndexWithPerPageMoreThanOneHundred(): void
-    {
-        $obj_request = new Request(['per_page' => 200]);
-
-        $this->_builder->method('paginate')->willReturn(new LengthAwarePaginator(collect(), 0, 100));
-
-        $this->_repository
-            ->expects($this->once())
-            ->method('index')
-            ->with($obj_request)
-            ->willReturn($this->_builder);
-
-        $result = $this->_service->index($obj_request);
-
-        $this->assertNotNull($result);
-        $this->assertEquals(100, $result->perPage());
     }
 }
