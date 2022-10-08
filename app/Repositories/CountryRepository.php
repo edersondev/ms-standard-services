@@ -38,20 +38,24 @@ class CountryRepository
      */
     public function filterIndex(Request $request, Builder &$obj): void
     {
-        if($request->has('name') && !empty($request->name)){
-            $obj->where('name','like',"%{$request->name}%");
-        }
+        $obj->when(
+            $request->name,
+            fn (Builder $query) => $query->where('name', 'like', "%{$request->name}%")
+        );
 
-        if($request->has('iso_code') && !empty($request->iso_code)){
-            $obj->where('iso_code', $request->iso_code);
-        }
+        $obj->when(
+            $request->iso_code,
+            fn (Builder $query) => $query->where('iso_code', $request->iso_code)
+        );
 
-        if($request->has('iso_code3') && !empty($request->iso_code3)){
-            $obj->where('iso_code3', $request->iso_code3);
-        }
+        $obj->when(
+            $request->iso_code3,
+            fn (Builder $query) => $query->where('iso_code3', $request->iso_code3)
+        );
 
-        if($request->has('number_code') && !empty($request->number_code)){
-            $obj->where('number_code', $request->number_code);
-        }
+        $obj->when(
+            $request->number_code,
+            fn (Builder $query) => $query->where('number_code', $request->number_code)
+        );
     }
 }
