@@ -21,7 +21,7 @@ class CountrySeeder extends Seeder
     {
         $countries = $this->getListOfCountries();
 
-        foreach ( $countries as $country ) {
+        foreach ($countries as $country) {
             $data = (array)$country;
             DB::transaction(function () use ($data) {
                 Country::create($data);
@@ -30,13 +30,13 @@ class CountrySeeder extends Seeder
     }
 
     /**
-     * 
+     * Retrive the list of countries from json file
      */
     public function getListOfCountries(): array
     {
         $path = 'seeders/json_files/countries.json';
         $countries_json_file = database_path($path);
-        if( !file_exists($countries_json_file) ) {
+        if (!file_exists($countries_json_file)) {
             throw new AppException("File doesn't exist [{$path}]");
         }
         return json_decode(file_get_contents($countries_json_file));
