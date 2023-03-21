@@ -34,12 +34,14 @@ return [
              */
             'match' => [
                 /*
-                 * Match only routes whose paths match this pattern (use * as a wildcard to match any characters). Example: 'users/*'.
+                 * Match only routes whose paths match this pattern (use * as a wildcard to match any characters).
+                 * Example: 'users/*'.
                  */
                 'prefixes' => ['api/*'],
 
                 /*
-                 * Match only routes whose domains match this pattern (use * as a wildcard to match any characters). Example: 'api.*'.
+                 * Match only routes whose domains match this pattern (use * as a wildcard to match any characters).
+                 * Example: 'api.*'.
                  */
                 'domains' => ['*'],
 
@@ -268,8 +270,9 @@ INTRO
      *
      */
     'example_languages' => [
-        'bash',
+        'php',
         'javascript',
+        'bash',
     ],
 
     /*
