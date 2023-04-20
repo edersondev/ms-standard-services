@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Services\CountryService;
-use App\Http\Resources\ResponseCollection;
+use App\Http\Resources\ResponseResource;
 
 class CountryController extends Controller
 {
@@ -34,6 +34,6 @@ class CountryController extends Controller
      */
     public function index(Request $request)
     {
-        return new ResponseCollection($this->_service->index($request));
+        return ResponseResource::collection($this->_service->index($request));
     }
 }
