@@ -20,6 +20,11 @@ class CountryController extends Controller
      *
      * This endpoint will bring a list of countries around the World, you'll get a 200 OK response.
      *
+     * @queryParam name string Field to filter by name. No-example
+     * @queryParam iso_code string Field to filter by iso_code. No-example
+     * @queryParam iso_code3 string Field to filter by iso_code3. No-example
+     * @queryParam number_code string Field to filter by number_code. No-example
+     *
      * @responseField id Unique identify
      * @responseField name The country name
      * @responseField iso_code Alpha-2 codes are two-letter country codes defined in ISO 3166-1
