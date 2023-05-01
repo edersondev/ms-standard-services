@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('regions', function (Blueprint $table) {
+        Schema::create('tb_region', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('name', 80)
+                ->comment('Region name');
+            $table->foreign('country_id')->references('id')->on('tb_country');
         });
     }
 
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('regions');
+        Schema::dropIfExists('tb_region');
     }
 };
