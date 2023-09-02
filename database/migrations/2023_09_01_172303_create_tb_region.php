@@ -17,11 +17,7 @@ return new class extends Migration
             $table->string('name', 80)
                 ->comment('Name of the Region');
 
-            $table->unsignedBigInteger('state_id');
-
             $table->unsignedBigInteger('country_id');
-
-            $table->foreign('state_id')->references('id')->on('tb_state');
 
             $table->foreign('country_id')->references('id')->on('tb_country');
         });
