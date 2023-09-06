@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Norte",
+        "region_code": "N"
+    },
+    {
+        "name": "Nordeste",
+        "region_code": "NE"
+    },
+    {
+        "name": "Sudeste",
+        "region_code": "SE"
+    },
+    {
+        "name": "Sul",
+        "region_code": "S"
+    },
+    {
+        "name": "Centro-Oeste",
+        "region_code": "CO"
+    }
+  ]
