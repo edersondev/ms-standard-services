@@ -22,9 +22,12 @@ class CountrySeeder extends Seeder
         $countries = $this->getListOfCountries();
 
         foreach ($countries as $country) {
-            $data = (array)$country;
+            $data = $country;
             DB::transaction(function () use ($data) {
-                Country::create($data);
+                Country::updateOrCreate(
+                    ['iso_code' => $data['iso_code']],
+                    $data
+                );
             });
         }
     }
@@ -39,6 +42,6 @@ class CountrySeeder extends Seeder
         if (!file_exists($countries_json_file)) {
             throw new AppException("File doesn't exist [{$path}]");
         }
-        return json_decode(file_get_contents($countries_json_file));
+        return json_decode(file_get_contents($countries_json_file), true);
     }
 }
