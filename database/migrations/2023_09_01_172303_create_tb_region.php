@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('name', 80)
                 ->comment('Name of the Region');
 
+            $table->string('region_code', 3)
+                ->nullable()
+                ->comment('Initials of the Region');
+
             $table->unsignedBigInteger('country_id');
 
             $table->foreign('country_id')->references('id')->on('tb_country');
