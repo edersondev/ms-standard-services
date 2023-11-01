@@ -3,6 +3,8 @@
 namespace App\Http\Services;
 
 use App\Repositories\RegionRepository;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 
 class RegionService
 {
@@ -14,5 +16,10 @@ class RegionService
     public function __construct(RegionRepository $repository)
     {
         $this->_repository = $repository;
+    }
+
+    public function index(Request $request): Collection|array
+    {
+        return $this->_repository->index($request)->get();
     }
 }
