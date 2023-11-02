@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegionRequest;
 use Illuminate\Http\Request;
 use App\Http\Services\RegionService;
 use App\Http\Resources\ResponseResource;
@@ -26,7 +27,7 @@ class RegionController extends Controller
         return ResponseResource::collection($this->_service->index($request));
     }
 
-    public function store(Request $request)
+    public function store(RegionRequest $request)
     {
         $region = $this->_service->store($request);
         $location = route('regions.show', ['region' => $region->id]);
