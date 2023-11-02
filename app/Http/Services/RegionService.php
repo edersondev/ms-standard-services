@@ -22,4 +22,9 @@ class RegionService
     {
         return $this->_repository->index($request)->get();
     }
+
+    public function store(Request $request): \App\Models\Region
+    {
+        return $this->_repository->store($request);
+    }
 }

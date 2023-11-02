@@ -17,4 +17,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('countries', [CountryController::class, 'index']);
-Route::get('regions/{country_iso}', [RegionController::class, 'index']);
+
+Route::apiResource('regions', RegionController::class);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Services\RegionService;
 use App\Http\Resources\ResponseResource;
+use Symfony\Component\HttpFoundation\Response;
 
 class RegionController extends Controller
 {
@@ -18,10 +19,22 @@ class RegionController extends Controller
         $this->_service = $service;
     }
 
-    public function index(Request $request, string $country_iso)
+    public function index(Request $request)
     {
-        $request->merge(['country_iso' => $country_iso]);
+        $request->validate(['country_iso' => 'required']);
 
         return ResponseResource::collection($this->_service->index($request));
+    }
+
+    public function store(Request $request)
+    {
+        $region = $this->_service->store($request);
+        $location = route('regions.show', ['region' => $region->id]);
+
+        return response(
+            ResponseResource::make($region),
+            Response::HTTP_CREATED,
+            ['Location' => $location]
+        );
     }
 }
