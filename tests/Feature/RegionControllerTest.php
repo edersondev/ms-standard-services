@@ -74,11 +74,7 @@ class RegionControllerTest extends TestCase
     {
         $country = Country::factory()->create();
 
-        $data_post = [
-            'name' => fake()->name(),
-            'region_code' => fake()->numberBetween(10,999),
-            'country_id' => $country->id
-        ];
+        $data_post = $data_post = $this->getDataPost($country->id);
 
         $response = $this->postJson($this->_end_point, $data_post)
             ->assertStatus(201);
@@ -90,5 +86,46 @@ class RegionControllerTest extends TestCase
             ->assertJson(fn (AssertableJson $json) =>
                 $json->hasAll($this->_response_fields)
             );
+    }
+
+    /**
+     * @test
+     * @dataProvider createMissingRequiredFieldProvider
+     */
+    public function whenMissingFieldOnCreate($field, $status_code): void
+    {
+        $country = Country::factory()->create();
+
+        $country_id = $field === 'invalid_country_id' ? fake()->numberBetween(10,999) : $country->id;
+
+        $data_post = $this->getDataPost($country_id);
+
+        unset($data_post[$field]);
+
+        $response = $this->postJson($this->_end_point, $data_post)
+            ->assertStatus($status_code);
+        
+        if ($status_code !== 201 && $field !== 'invalid_country_id') {
+            $response->assertInvalid([$field]);
+        }
+    }
+
+    public function createMissingRequiredFieldProvider(): array
+    {
+        return [
+            'when missing field name' => ['name', 422],
+            'when missing field region_code' => ['region_code', 201],
+            'when missing field country_id' => ['country_id', 422],
+            'when country_id doesn\'t exists in database' => ['invalid_country_id', 422]
+        ];
+    }
+
+    public function getDataPost($country_id): array
+    {
+        return [
+            'name' => fake()->name(),
+            'region_code' => fake()->numberBetween(100,999),
+            'country_id' => $country_id
+        ];
     }
 }
