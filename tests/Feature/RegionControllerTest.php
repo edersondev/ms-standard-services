@@ -38,4 +38,20 @@ class RegionControllerTest extends TestCase
                 )
             );
     }
+
+    /**
+     * @test
+     */
+    public function whenIndexIsEmptyThenReturnSuccess(): void
+    {
+        $country = Country::factory()->make();
+
+        $iso_code = strtolower($country->iso_code);
+
+        $this->getJson("{$this->_end_point}/{$iso_code}")
+            ->assertStatus(200)
+            ->assertJson(fn (AssertableJson $json) =>
+                $json->has('data', 0)
+            );
+    }
 }
