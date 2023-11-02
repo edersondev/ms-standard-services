@@ -92,7 +92,7 @@ class RegionControllerTest extends TestCase
      * @test
      * @dataProvider createMissingRequiredFieldProvider
      */
-    public function whenMissingFieldOnCreate($field, $status_code): void
+    public function whenCreateValidateFields($field, $status_code): void
     {
         $country = Country::factory()->create();
 
