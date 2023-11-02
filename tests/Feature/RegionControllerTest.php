@@ -116,7 +116,7 @@ class RegionControllerTest extends TestCase
             'when missing field name' => ['name', 422],
             'when missing field region_code' => ['region_code', 201],
             'when missing field country_id' => ['country_id', 422],
-            'when country_id doesn\'t exists in database' => ['invalid_country_id', 422]
+            'when country_id doesn\'t exist in the database' => ['invalid_country_id', 422]
         ];
     }
 
