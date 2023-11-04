@@ -43,4 +43,11 @@ class RegionController extends Controller
     {
         return ResponseResource::make($this->_service->show($id));
     }
+
+    public function update(int $id, RegionRequest $request)
+    {
+        $this->_service->update($id, $request);
+
+        return response()->noContent();
+    }
 }

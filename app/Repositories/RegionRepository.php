@@ -43,4 +43,14 @@ class RegionRepository
     {
         return $this->_entity::findOrFail($id);
     }
+
+    public function update(int $id, Request $request): void
+    {
+        DB::transaction(function () use ($id, $request) {
+            $inputs = $request->only($this->_entity->getFillable());
+            $this->_entity::findOrFail($id)
+              ->fill($inputs)
+              ->save();
+          });
+    }
 }

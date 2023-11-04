@@ -32,4 +32,9 @@ class RegionService
     {
         return $this->_repository->show($id);
     }
+
+    public function update(int $id, Request $request): void
+    {
+        $this->_repository->update($id, $request);
+    }
 }
