@@ -21,10 +21,17 @@ class RegionRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name'          => 'required|string|max:80',
-            'region_code'   => 'nullable|min:1|max:3',
-            'country_id'    => 'required|exists:tb_country,id'
+        $rules = [
+            'name'          => ['required', 'string', 'max:80'],
+            'region_code'   => ['nullable', 'max:3'],
+            'country_id'    => ['required', 'exists:tb_country,id']
         ];
+
+        if (in_array(['PUT', 'PATCH'], [$this->route()->methods()])) {
+            array_unshift($rules['name'], 'sometimes');
+            array_unshift($rules['country_id'], 'sometimes');
+        }
+
+        return $rules;
     }
 }
