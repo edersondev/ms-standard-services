@@ -35,6 +35,15 @@ class Region extends Model
         'country_id',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'region_code' => 'integer',
+    ];
+
     public function country(): belongsTo
     {
         return $this->belongsTo(Country::class);
