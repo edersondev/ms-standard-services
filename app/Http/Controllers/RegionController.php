@@ -38,4 +38,9 @@ class RegionController extends Controller
             ['Location' => $location]
         );
     }
+
+    public function show(int $id)
+    {
+        return ResponseResource::make($this->_service->show($id));
+    }
 }

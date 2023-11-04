@@ -38,4 +38,9 @@ class RegionRepository
             return $this->_entity::create($inputs);
         });
     }
+
+    public function show(int $id): Region
+    {
+        return $this->_entity::findOrFail($id);
+    }
 }

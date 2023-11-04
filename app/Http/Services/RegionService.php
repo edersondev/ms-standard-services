@@ -27,4 +27,9 @@ class RegionService
     {
         return $this->_repository->store($request);
     }
+
+    public function show(int $id): \App\Models\Region
+    {
+        return $this->_repository->show($id);
+    }
 }
