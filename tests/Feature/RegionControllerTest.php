@@ -116,10 +116,10 @@ class RegionControllerTest extends TestCase
     public function createMissingRequiredFieldProvider(): array
     {
         return [
-            'when missing field name' => ['name', 422],
-            'when missing field region_code' => ['region_code', 201],
-            'when missing field country_id' => ['country_id', 422],
-            'when country_id doesn\'t exist in the database' => ['invalid_country_id', 422]
+            'when missing field name then return error' => ['name', 422],
+            'when missing field region_code then return success' => ['region_code', 201],
+            'when missing field country_id then return error' => ['country_id', 422],
+            'when country_id doesn\'t exist in the database then return error' => ['invalid_country_id', 422]
         ];
     }
 
@@ -161,6 +161,42 @@ class RegionControllerTest extends TestCase
             ->assertStatus(500);
 
         $this->assertEquals('TypeError', $response['exception']);
+    }
+
+    /**
+     * @test
+     * @dataProvider updateEachFieldProvider
+     */
+    public function whenUpdateThenReturnSuccess($field, $value): void
+    {
+        $region = Region::factory()->create();
+
+        $data_patch = [$field => $value];
+
+        if ($field === 'country_id') {
+            $country = Country::factory()->create();
+            $data_patch[$field] = $value = $country->id;
+        }
+
+        $this->patchJson("{$this->_end_point}/{$region->id}", $data_patch)
+            ->assertNoContent();
+        
+        $this->getJson("{$this->_end_point}/{$region->id}")
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) =>
+                $json->has('data', fn ($json) =>
+                    $json->where($field, $value)->etc()
+                )
+            );
+    }
+
+    public function updateEachFieldProvider(): array
+    {
+        return [
+            'when update field name' => ['name', fake()->name()],
+            'when update field region code' => ['region_code', fake()->numberBetween(100,999)],
+            'when update field country id' => ['country_id', null]
+        ];
     }
 
     public function getDataPost($country_id): array
