@@ -33,7 +33,7 @@ class RegionControllerTest extends TestCase
         $iso_code = strtolower($country->iso_code);
 
         $this->getJson("{$this->_end_point}?country_iso={$iso_code}")
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJson(fn (AssertableJson $json) =>
                 $json->has('data', $number_items, fn ($json) =>
                     $json->hasAll($this->_response_fields)
@@ -51,7 +51,7 @@ class RegionControllerTest extends TestCase
         $iso_code = strtolower($country->iso_code);
 
         $this->getJson("{$this->_end_point}?country_iso={$iso_code}")
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJson(fn (AssertableJson $json) =>
                 $json->has('data', 0)
             );
@@ -63,7 +63,7 @@ class RegionControllerTest extends TestCase
     public function whenIndexWithoutCountryIsoThenReturnError(): void
     {
         $this->getJson("{$this->_end_point}")
-            ->assertStatus(422)
+            ->assertUnprocessable()
             ->assertInvalid(['country_iso']);
     }
 
@@ -77,12 +77,12 @@ class RegionControllerTest extends TestCase
         $data_post = $data_post = $this->getDataPost($country->id);
 
         $response = $this->postJson($this->_end_point, $data_post)
-            ->assertStatus(201);
+            ->assertCreated();
 
         $location = route('regions.show', ['region' => $response['id']]);
 
         $response
-            ->assertHeader('location', $location)
+            ->assertLocation($location)
             ->assertJson(fn (AssertableJson $json) =>
                 $json->hasAll($this->_response_fields)
             );
@@ -94,9 +94,12 @@ class RegionControllerTest extends TestCase
      */
     public function whenCreateValidateFields($field, $status_code): void
     {
-        $country = Country::factory()->create();
+        $country_id = fake()->numberBetween(10,999);
 
-        $country_id = $field === 'invalid_country_id' ? fake()->numberBetween(10,999) : $country->id;
+        if ($field !== 'invalid_country_id') {
+            $country = Country::factory()->create();
+            $country_id = $country->id;
+        }
 
         $data_post = $this->getDataPost($country_id);
 
@@ -118,6 +121,46 @@ class RegionControllerTest extends TestCase
             'when missing field country_id' => ['country_id', 422],
             'when country_id doesn\'t exist in the database' => ['invalid_country_id', 422]
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function whenShowThenReturnSuccess(): void
+    {
+        $region = Region::factory()->create();
+
+        $this->getJson("{$this->_end_point}/{$region->id}")
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) =>
+                $json->has('data', fn ($json) =>
+                    $json->hasAll($this->_response_fields)
+                )
+            );
+    }
+
+    /**
+     * @test
+     */
+    public function whenShowDoesntExistThenReturnError(): void
+    {
+        $id = fake()->numberBetween(1,999);
+
+        $this->getJson("{$this->_end_point}/{$id}")
+            ->assertNotFound();
+    }
+
+    /**
+     * @test
+     */
+    public function whenShowWithParamIdAsStringThenReturnError(): void
+    {
+        $string = fake()->word();
+
+        $response = $this->getJson("{$this->_end_point}/{$string}")
+            ->assertStatus(500);
+
+        $this->assertEquals('TypeError', $response['exception']);
     }
 
     public function getDataPost($country_id): array
