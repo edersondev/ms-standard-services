@@ -189,6 +189,20 @@ class RegionControllerTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
+    public function whenDestroyThenReturnSuccess(): void
+    {
+        $region = Region::factory()->create();
+
+        $this->deleteJson("{$this->_end_point}/{$region->id}")
+            ->assertNoContent();
+
+        $this->getJson("{$this->_end_point}/{$region->id}")
+            ->assertNotFound();
+    }
+
     public function getDataPost($country_id = null): array
     {
         return [
