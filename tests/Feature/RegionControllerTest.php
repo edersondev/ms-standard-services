@@ -72,9 +72,7 @@ class RegionControllerTest extends TestCase
      */
     public function whenCreateThenReturnSuccess(): void
     {
-        $country = Country::factory()->create();
-
-        $data_post = $data_post = $this->getDataPost($country->id);
+        $data_post = $data_post = $this->getDataPost();
 
         $response = $this->postJson($this->_end_point, $data_post)
             ->assertCreated();
@@ -92,34 +90,26 @@ class RegionControllerTest extends TestCase
      * @test
      * @dataProvider createMissingRequiredFieldProvider
      */
-    public function whenCreateValidateFields($field, $status_code): void
+    public function whenCreateUseInvalidFieldsThenReturnError($field, $value): void
     {
-        $country_id = fake()->numberBetween(10,999);
+        $data_post = $this->getDataPost();
 
-        if ($field !== 'invalid_country_id') {
-            $country = Country::factory()->create();
-            $country_id = $country->id;
-        }
+        $data_post[$field] = $value;
 
-        $data_post = $this->getDataPost($country_id);
-
-        unset($data_post[$field]);
-
-        $response = $this->postJson($this->_end_point, $data_post)
-            ->assertStatus($status_code);
-        
-        if ($status_code !== 201 && $field !== 'invalid_country_id') {
-            $response->assertInvalid([$field]);
-        }
+        $this->postJson($this->_end_point, $data_post)
+            ->assertUnprocessable()
+            ->assertInvalid([$field]);
     }
 
     public function createMissingRequiredFieldProvider(): array
     {
         return [
-            'when missing field name then return error' => ['name', 422],
-            'when missing field region_code then return success' => ['region_code', 201],
-            'when missing field country_id then return error' => ['country_id', 422],
-            'when country_id doesn\'t exist in the database then return error' => ['invalid_country_id', 422]
+            'when field name is null' => ['name', null],
+            'when field name is not string' => ['name', fake()->numberBetween(1,999)],
+            'when field name has more than 80 characters' => ['name', fake()->realTextBetween(90)],
+            'when field region_code has more than 3 characters' => ['region_code', fake()->numberBetween(1000,9999)],
+            'when field country_id is null' => ['country_id', null],
+            'when field country_id does not exist in the database' => ['country_id', fake()->numberBetween(1,999)]
         ];
     }
 
@@ -142,7 +132,7 @@ class RegionControllerTest extends TestCase
     /**
      * @test
      */
-    public function whenShowDoesntExistThenReturnError(): void
+    public function whenShowDoesNotExistThenReturnError(): void
     {
         $id = fake()->numberBetween(1,999);
 
@@ -199,12 +189,12 @@ class RegionControllerTest extends TestCase
         ];
     }
 
-    public function getDataPost($country_id): array
+    public function getDataPost($country_id = null): array
     {
         return [
             'name' => fake()->name(),
             'region_code' => fake()->numberBetween(100,999),
-            'country_id' => $country_id
+            'country_id' => $country_id ?? Country::factory()->create()->id
         ];
     }
 }
