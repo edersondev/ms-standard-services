@@ -53,4 +53,11 @@ class RegionRepository
               ->save();
           });
     }
+
+    public function destroy(int $id): void
+    {
+        DB::transaction(function () use ($id) {
+            $this->_entity::destroy($id);
+        });
+    }
 }

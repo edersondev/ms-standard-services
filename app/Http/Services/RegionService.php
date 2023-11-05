@@ -37,4 +37,9 @@ class RegionService
     {
         $this->_repository->update($id, $request);
     }
+
+    public function destroy(int $id): void
+    {
+        $this->_repository->destroy($id);
+    }
 }

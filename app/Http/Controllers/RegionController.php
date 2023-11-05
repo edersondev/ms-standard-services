@@ -50,4 +50,11 @@ class RegionController extends Controller
 
         return response()->noContent();
     }
+
+    public function destroy(int $id)
+    {
+        $this->_service->destroy($id);
+
+        return response()->noContent();
+    }
 }
