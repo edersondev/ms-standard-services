@@ -12,6 +12,10 @@ class CountryControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $_end_point = '/api/countries';
+
+    protected $_response_fields = ['id', 'name', 'iso_code', 'iso_code3', 'number_code', 'dial'];
+
     /**
      * @test
      */
@@ -21,17 +25,12 @@ class CountryControllerTest extends TestCase
 
         Country::factory($number_items)->create();
 
-        $response = $this->get('/api/countries');
-
-        $response->assertOk();
-
-        $response->assertJson(fn (AssertableJson $json) =>
+        $this->get($this->_end_point)
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) =>
             $json->hasAll(['data', 'links', 'meta'])
-                ->has('data', $number_items)
-                ->has(
-                    'data.0',
-                    fn (AssertableJson $json) =>
-                    $json->hasAll(['id', 'name', 'iso_code', 'iso_code3', 'number_code', 'dial'])
+                ->has('data', $number_items, fn (AssertableJson $json) =>
+                    $json->hasAll($this->_response_fields)
                 )
         );
     }
@@ -45,99 +44,52 @@ class CountryControllerTest extends TestCase
 
         Country::factory($number_items)->create();
 
-        $response = $this->get('/api/countries?per_page=200');
-
-        $response->assertOk();
-
-        $response->assertJson(fn (AssertableJson $json) =>
-            $json->hasAll(['data', 'links', 'meta'])
-                ->has('data', $number_items)
-                ->has('meta', fn (AssertableJson $json) => $json->where('per_page', 100)->etc())
-        );
+        $this->get("{$this->_end_point}?per_page=200")
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) =>
+                $json->hasAll(['data', 'links', 'meta'])
+                    ->has('data', $number_items)
+                    ->has('meta', fn (AssertableJson $json) =>
+                        $json->where('per_page', 100)->etc()
+                    )
+            );
     }
 
     /**
      * @test
+     * @dataProvider indexFiltersProvider
      */
-    public function whenIndexSearchByNameThenReturnSuccess(): void
+    public function whenIndexSearchByFieldThenReturnSuccess($field): void
     {
         $countries = $this->generateDummyData();
-
         $random_country = $countries->random();
 
-        $param_search = trim(strtolower(substr($random_country->name, 0, 5)));
+        $param_search = $random_country->{$field};
 
-        $response = $this->get("/api/countries?name={$param_search}");
+        if ($field === 'name') {
+            $param_search = trim(strtolower(substr($random_country->{$field}, 0, 5)));
+        }
 
-        $response->assertOk();
-
-        $response->assertJson(fn (AssertableJson $json) =>
-            $json->hasAll(['data', 'links', 'meta'])
-                ->has('data.0')
-        );
+        $this->get("{$this->_end_point}?{$field}={$param_search}")
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) =>
+                $json->hasAll(['data', 'links', 'meta'])
+                    ->has('data', fn (AssertableJson $json) =>
+                        $json->first(fn ($json) =>
+                            $json->hasAll($this->_response_fields)
+                        )
+                    )
+            );
     }
 
-    /**
-     * @test
-     */
-    public function whenIndexSearchByIsoCodeThenReturnSuccess(): void
+    public function indexFiltersProvider(): array
     {
-        $countries = $this->generateDummyData();
-
-        $random_country = $countries->random();
-
-        $param_search = $random_country->iso_code;
-
-        $response = $this->get("/api/countries?iso_code={$param_search}");
-
-        $response->assertOk();
-
-        $response->assertJson(fn (AssertableJson $json) =>
-            $json->hasAll(['data', 'links', 'meta'])
-                ->has('data.0')
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function whenIndexSearchByIsoCode3ThenReturnSuccess(): void
-    {
-        $countries = $this->generateDummyData();
-
-        $random_country = $countries->random();
-
-        $param_search = $random_country->iso_code3;
-
-        $response = $this->get("/api/countries?iso_code3={$param_search}");
-
-        $response->assertOk();
-
-        $response->assertJson(fn (AssertableJson $json) =>
-            $json->hasAll(['data', 'links', 'meta'])
-                ->has('data.0')
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function whenIndexSearchByNumberCodeThenReturnSuccess(): void
-    {
-        $countries = $this->generateDummyData();
-
-        $random_country = $countries->random();
-
-        $param_search = $random_country->number_code;
-
-        $response = $this->get("/api/countries?number_code={$param_search}");
-
-        $response->assertOk();
-
-        $response->assertJson(fn (AssertableJson $json) =>
-            $json->hasAll(['data', 'links', 'meta'])
-                ->has('data.0')
-        );
+        return [
+            'when search by name' => ['name'],
+            'when search by iso code' => ['iso_code'],
+            'when search by iso code3' => ['iso_code3'],
+            'when search by number code' => ['number_code']
+        ];
     }
 
     public function generateDummyData(): Collection
