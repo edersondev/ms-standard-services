@@ -74,10 +74,8 @@ class CountryControllerTest extends TestCase
             ->assertOk()
             ->assertJson(fn (AssertableJson $json) =>
                 $json->hasAll(['data', 'links', 'meta'])
-                    ->has('data', fn (AssertableJson $json) =>
-                        $json->first(fn ($json) =>
-                            $json->hasAll($this->_response_fields)
-                        )
+                    ->has('data.0', fn (AssertableJson $json) =>
+                        $json->hasAll($this->_response_fields)
                     )
             );
     }
