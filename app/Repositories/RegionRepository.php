@@ -27,7 +27,7 @@ class RegionRepository
     {
         return $this->_entity::whereHas(
             'country',
-            fn (Builder $query) => $query->where('iso_code', $request->country_iso)
+            fn (Builder $query) => $query->where('iso_code', strtoupper($request->country_iso))
         )->orderBy('name');
     }
 
