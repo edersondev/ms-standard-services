@@ -3,14 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\Country;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
 class CountryControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected $_end_point = '/api/countries';
 
@@ -80,7 +80,7 @@ class CountryControllerTest extends TestCase
             );
     }
 
-    public function indexFiltersProvider(): array
+    public static function indexFiltersProvider(): array
     {
         return [
             'when search by name' => ['name'],

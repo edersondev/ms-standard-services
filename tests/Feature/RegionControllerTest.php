@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Testing\Fluent\AssertableJson;
 use App\Models\Country;
 use App\Models\Region;
@@ -11,7 +11,7 @@ use Tests\TestCase;
 class RegionControllerTest extends TestCase
 {
 
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected $_end_point = '/api/regions';
 
@@ -101,7 +101,7 @@ class RegionControllerTest extends TestCase
             ->assertInvalid([$field]);
     }
 
-    public function createMissingRequiredFieldProvider(): array
+    public static function createMissingRequiredFieldProvider(): array
     {
         return [
             'when field name is null' => ['name', null],
@@ -150,7 +150,7 @@ class RegionControllerTest extends TestCase
         $response = $this->getJson("{$this->_end_point}/{$string}")
             ->assertStatus(500);
 
-        $this->assertEquals('TypeError', $response['exception']);
+        $this->assertEquals('TypeError', get_class($response->baseResponse->exception));
     }
 
     /**
@@ -180,7 +180,7 @@ class RegionControllerTest extends TestCase
             );
     }
 
-    public function updateEachFieldProvider(): array
+    public static function updateEachFieldProvider(): array
     {
         return [
             'when update field name' => ['name', fake()->name()],
