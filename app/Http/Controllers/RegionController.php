@@ -20,8 +20,21 @@ class RegionController extends Controller
         $this->_service = $service;
     }
 
+    /**
+     * List of regions by country
+     *
+     * This endpoint will bring a list of regions by iso_code from country, you'll get a 200 OK response.
+     *
+     * @queryParam country_iso string required The iso code of the country. Example: br
+     *
+     * @responseField id Unique identify
+     * @responseField name The region name
+     * @responseField region_code The code of the region
+     * @responseField country_id The country_id that the region belongs
+     */
     public function index(Request $request)
     {
+        // Query parameters
         $request->validate(['country_iso' => 'required']);
 
         return ResponseResource::collection($this->_service->index($request));
