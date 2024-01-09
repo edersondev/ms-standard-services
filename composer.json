@@ -49,8 +49,9 @@
             "@php artisan key:generate --ansi"
         ],
         "run-tests": [
-            "php artisan migrate --env=testing",
-            "./vendor/bin/paratest --runner WrapperRunner"
+            "php artisan migrate -q --env=testing",
+            "./vendor/bin/paratest --runner WrapperRunner",
+            "php artisan migrate:reset -q --env=testing"
         ]
     },
     "extra": {
