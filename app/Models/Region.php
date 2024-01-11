@@ -41,7 +41,7 @@ class Region extends Model
      * @var array
      */
     protected $casts = [
-        'region_code' => 'integer',
+        'country_id' => 'integer',
     ];
 
     public function country(): belongsTo
