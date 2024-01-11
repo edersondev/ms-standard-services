@@ -6,6 +6,13 @@ use Illuminate\Http\Request;
 use App\Http\Services\CountryService;
 use App\Http\Resources\ResponseResource;
 
+/**
+ * @group Territory
+ *
+ * APIs for managing countries
+ *
+ * @subgroup Country
+ */
 class CountryController extends Controller
 {
     protected $_service;
